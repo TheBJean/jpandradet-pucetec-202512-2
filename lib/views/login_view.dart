@@ -41,11 +41,9 @@ class LoginScreen extends StatelessWidget {
               GlobalFormButton(
                 label: 'Iniciar sesión',
                 onTap: () async {
-                  try {
-                    String response = await login(usuarioController.text, contrasenaController.text);
-                    print("Login exitoso: $response");
-                  } catch (e) {
-                    print("Error al iniciar sesión: $e");
+                  final response = await login(usuarioController.text, contrasenaController.text);
+                  if (response) {
+                    Navigator.pushNamed(context, '/home');
                   }
                 },
               ),
