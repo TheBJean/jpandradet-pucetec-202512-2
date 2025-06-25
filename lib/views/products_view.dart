@@ -178,7 +178,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                           children: [
                             Text('Código: ${product.codigo}'),                    // Código del producto
                             Text('Descripción: ${product.descripcion}'),         // Descripción
-                            Text('Stock: ${product.cantidadBodega} ${product.tipoUnidad}'),  // Stock disponible
+                            Text('Unidad: ${product.tipoUnidad}'),               // Tipo de unidad de medida
+                            Text('Cantidad disponible: ${product.cantidadBodega} productos'),  // Cantidad de productos en bodega
                             if (product.precioUnitario != null)                  // Precio (solo si existe)
                               Text('Precio: \$${product.precioUnitario}'),
                             Text('Observación: ${product.observacion}'),         // Observaciones
@@ -186,6 +187,14 @@ class _ProductsScreenState extends State<ProductsScreen> {
                           ],
                         ),
                         isThreeLine: true,  // Permite múltiples líneas en el subtitle
+                        trailing: Text(
+                          'ID: ${product.id}',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),  // ID del producto a la derecha
                       ),
                     );
                   },

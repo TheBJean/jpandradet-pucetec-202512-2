@@ -7,8 +7,8 @@ class Product {
   final String codigo;             // Código del producto
   final String nombre;             // Nombre del producto
   final String descripcion;        // Descripción del producto
-  final String tipoUnidad;         // Tipo de unidad (gramos, kilos, etc.)
-  final int cantidadBodega;        // Cantidad disponible en bodega
+  final String tipoUnidad;         // Unidad de medida (gramos, kilos, unidad, etc.)
+  final int cantidadBodega;        // Cantidad de productos disponibles en bodega
   final String? precioUnitario;    // Precio unitario (puede ser null)
   final String observacion;        // Observaciones del producto
   final int usuarioId;             // ID del usuario que creó el producto
@@ -29,13 +29,13 @@ class Product {
   // Factory constructor que convierte JSON a objeto Product
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      id: json['id'],                                    // Extrae el ID del JSON
+      id: json['id'],                                    // Extraemos el ID del JSON
       codigo: json['codigo'],                           // Extrae el código
       nombre: json['nombre'],                           // Extrae el nombre
       descripcion: json['descripcion'],                 // Extrae la descripción
       tipoUnidad: json['tipo_unidad'],                  // Extrae el tipo de unidad
       cantidadBodega: json['cantidad_bodega'],          // Extrae la cantidad en bodega
-      precioUnitario: json['precio_unitario']?.toString(), // Convierte precio a string (puede ser null)
+      precioUnitario: json['precio_unitario']?.toString(), // Convierte precio a string (puede ser null dado dado a que no hay datos en algunas partes)
       observacion: json['observacion'],                 // Extrae la observación
       usuarioId: json['usuario_id'],                    // Extrae el ID del usuario
     );
@@ -55,7 +55,7 @@ Future<List<Product>> getAllProducts() async {
     },
   );
 
-  // Verifica si la petición fue exitosa (código 200)
+  // Verificamos si la petición fue exitosa con el (código 200)
   if (response.statusCode == 200) {
     // Decodifica el JSON de la respuesta
     final List<dynamic> jsonData = jsonDecode(response.body);
