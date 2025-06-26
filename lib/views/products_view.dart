@@ -1,6 +1,8 @@
 // Importaciones necesarias para Flutter y nuestros widgets personalizados
 import 'package:flutter/material.dart';
 import '../widgets/global_form_button.dart';
+import '../widgets/product_card.dart';
+import '../widgets/state_widgets.dart';
 import '../services/products_services.dart';
 
 // Widget de estado que maneja la pantalla de productos
@@ -45,6 +47,37 @@ class _ProductsScreenState extends State<ProductsScreen> {
     }
   }
 
+  void _showProductDetails(Product product) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(product.nombre),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Código: ${product.codigo}'),
+              Text('Descripción: ${product.descripcion}'),
+              Text('Unidad: ${product.tipoUnidad}'),
+              Text('Stock: ${product.cantidadBodega}'),
+              if (product.precioUnitario != null)
+                Text('Precio: \$${product.precioUnitario}'),
+              Text('Observación: ${product.observacion}'),
+              Text('Usuario ID: ${product.usuarioId}'),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cerrar'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,167 +91,63 @@ class _ProductsScreenState extends State<ProductsScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Estado inicial: cuando no hay productos cargados y no está cargando
-            if (products.isEmpty && !isLoading && errorMessage == null)
-              Expanded(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Icono de inventario
-                      Icon(
-                        Icons.inventory_2,
-                        size: 80,
-                        color: Colors.grey[400],
-                      ),
-                      const SizedBox(height: 16),
-                      // Texto principal
-                      Text(
-                        'No hay productos cargados',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      // Texto secundario con instrucciones
-                      Text(
-                        'Presiona el botón para cargar los productos',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[500],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+            // Contenido principal
+            Expanded(
+              child: _buildContent(),
+            ),
             
-            // Estado de carga: muestra un spinner mientras se cargan los datos
-            if (isLoading)
-              Expanded(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(),  // Indicador de carga circular
-                      const SizedBox(height: 16),
-                      Text('Cargando productos...'),
-                    ],
-                  ),
-                ),
-              ),
-
-            // Estado de error: muestra un mensaje de error si algo falla
-            if (errorMessage != null)
-              Expanded(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Icono de error
-                      Icon(
-                        Icons.error_outline,
-                        size: 80,
-                        color: Colors.red[400],
-                      ),
-                      const SizedBox(height: 16),
-                      // Título del error
-                      Text(
-                        'Error al cargar productos',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.red[600],
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      // Mensaje de error específico
-                      Text(
-                        errorMessage!,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.red[500],
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-            // Lista de productos: se muestra cuando hay productos cargados
-            if (products.isNotEmpty)
-              Expanded(
-                child: ListView.builder(
-                  itemCount: products.length,  // Número total de productos
-                  itemBuilder: (context, index) {
-                    final product = products[index];  // Producto actual
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 8),  // Margen entre cards
-                      child: ListTile(
-                        // Avatar circular con la primera letra del nombre del producto
-                        leading: CircleAvatar(
-                          backgroundColor: Color.fromARGB(199, 0, 107, 238),
-                          child: Text(
-                            product.nombre[0].toUpperCase(),  // Primera letra en mayúscula
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        // Título del producto
-                        title: Text(
-                          product.nombre,
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        // Información detallada del producto
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Código: ${product.codigo}'),                    // Código del producto
-                            Text('Descripción: ${product.descripcion}'),         // Descripción
-                            Text('Unidad: ${product.tipoUnidad}'),               // Tipo de unidad de medida
-                            Text('Cantidad disponible: ${product.cantidadBodega} productos'),  // Cantidad de productos en bodega
-                            if (product.precioUnitario != null)                  // Precio (solo si existe)
-                              Text('Precio: \$${product.precioUnitario}'),
-                            Text('Observación: ${product.observacion}'),         // Observaciones
-                            Text('Creado por: Usuario ${product.usuarioId}'),    // Usuario que creó el producto
-                          ],
-                        ),
-                        isThreeLine: true,  // Permite múltiples líneas en el subtitle
-                        trailing: Text(
-                          'ID: ${product.id}',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),  // ID del producto a la derecha
-                      ),
-                    );
-                  },
-                ),
-              ),
-
-            const SizedBox(height: 16),  // Espacio antes de los botones
+            const SizedBox(height: 16),
             
-            // Botón "Mostrar Productos": solo aparece cuando no hay productos cargados
-            if (products.isEmpty && !isLoading)
-              GlobalFormButton(
-                label: 'Mostrar Productos',
-                onTap: loadProducts,  // Llama a la función para cargar productos
-              ),
-            
-            // Botón "Ir a carrito": solo aparece cuando hay productos cargados
-            if (products.isNotEmpty)
-              GlobalFormButton(
-                label: 'Ir a carrito',
-                onTap: () => Navigator.pushNamed(context, '/cart'),  // Navega al carrito
-              ),
+            // Botones de acción
+            _buildActionButtons(),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildContent() {
+    if (isLoading) {
+      return const LoadingStateWidget();
+    }
+    
+    if (errorMessage != null) {
+      return ErrorStateWidget(errorMessage: errorMessage!);
+    }
+    
+    if (products.isEmpty) {
+      return const EmptyStateWidget(
+        title: 'No hay productos cargados',
+        subtitle: 'Presiona el botón para cargar los productos',
+      );
+    }
+    
+    return ListView.builder(
+      itemCount: products.length,
+      itemBuilder: (context, index) {
+        return ProductCard(
+          product: products[index],
+          onTap: () => _showProductDetails(products[index]),
+        );
+      },
+    );
+  }
+
+  Widget _buildActionButtons() {
+    if (products.isEmpty && !isLoading) {
+      return GlobalFormButton(
+        label: 'Mostrar Productos',
+        onTap: loadProducts,
+      );
+    }
+    
+    if (products.isNotEmpty) {
+      return GlobalFormButton(
+        label: 'Ir a carrito',
+        onTap: () => Navigator.pushNamed(context, '/cart'),
+      );
+    }
+    
+    return const SizedBox.shrink();
   }
 } 
