@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_intro/bloc/login_bloc.dart';
+import 'package:flutter_intro/bloc/login_event.dart';
 import '../widgets/global_form_text.dart';
 import '../widgets/global_form_button.dart';
 import '../services/login.service.dart'; 
@@ -10,6 +13,9 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextEditingController usuarioController = TextEditingController();
     final TextEditingController contrasenaController = TextEditingController();
+
+    // bloc
+    final loginBloc = context.read<LoginBloc>();
 
     return Scaffold(
       body: SafeArea(
@@ -44,6 +50,7 @@ class LoginScreen extends StatelessWidget {
                   final response = await login(usuarioController.text, contrasenaController.text);
                   if (response) {
                     Navigator.pushNamed(context, '/home');
+                    loginBloc.add(LoginSendEvent());
                   }
                 },
               ),
