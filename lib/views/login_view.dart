@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_intro/bloc/login_bloc.dart';
-import 'package:flutter_intro/bloc/login_event.dart';
+import 'package:flutter_intro/bloc/login_bloc/login_bloc.dart';
+import 'package:flutter_intro/bloc/login_bloc/login_event.dart';
+import 'package:flutter_intro/bloc/login_bloc/login_state.dart';
 import '../widgets/global_form_text.dart';
 import '../widgets/global_form_button.dart';
-import '../services/login.service.dart'; 
+
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -13,12 +14,17 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextEditingController usuarioController = TextEditingController();
     final TextEditingController contrasenaController = TextEditingController();
-
-    // bloc
     final loginBloc = context.read<LoginBloc>();
 
     return Scaffold(
-      body: SafeArea(
+      body: BlocListener<LoginBloc, LoginState>( 
+        listener: (context, state) {
+          if (state.usuario != null && state.token  != null) {
+            
+            Navigator.pushReplacementNamed(context, '/home');
+          }
+        },
+        bloc: loginBloc,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -43,15 +49,21 @@ class LoginScreen extends StatelessWidget {
                 obscureText: true,
                 controller: contrasenaController,
               ),
-              const SizedBox(height: 24.0),
-              GlobalFormButton(
-                label: 'Iniciar sesión',
-                onTap: () async {
-                  final response = await login(usuarioController.text, contrasenaController.text);
-                  if (response) {
-                    Navigator.pushNamed(context, '/home');
-                    loginBloc.add(LoginSendEvent());
-                  }
+              BlocBuilder<LoginBloc, LoginState>(
+                builder: (context, state) {
+                  return Container(
+                    child: state.isLoading == true 
+                        ? const CircularProgressIndicator() 
+                        : GlobalFormButton(
+                            label: 'Iniciar sesión',
+                            onTap: () async {
+                              loginBloc.add(LoginSubmitEvent(
+                                usuario: usuarioController.text,
+                                password: contrasenaController.text,
+                              ));
+                            },
+                          ),
+                  );
                 },
               ),
             ],

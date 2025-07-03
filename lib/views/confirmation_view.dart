@@ -9,7 +9,7 @@ class ConfirmationScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Confirmacion'),
-        backgroundColor:Color.fromARGB(230, 141, 225, 5),
+        backgroundColor:const Color.fromARGB(230, 141, 225, 5),
       ),
       body: Center(
           child: Column(

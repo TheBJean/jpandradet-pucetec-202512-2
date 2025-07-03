@@ -4,6 +4,10 @@ import '../widgets/global_form_button.dart';
 import '../widgets/product_card.dart';
 import '../widgets/state_widgets.dart';
 import '../services/products_services.dart';
+import '../bloc/login_bloc/login_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../models/product_model.dart';
 
 // Widget de estado que maneja la pantalla de productos
 class ProductsScreen extends StatefulWidget {
@@ -80,11 +84,14 @@ class _ProductsScreenState extends State<ProductsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loginState = context.watch<LoginBloc>().state;
+    final usuario = loginState.usuario;
+
     return Scaffold(
       // Barra superior de la aplicación
       appBar: AppBar(
         title: const Text('Productos'),
-        backgroundColor: Color.fromARGB(199, 0, 107, 238),  // Color azul personalizado
+        backgroundColor: const Color.fromARGB(199, 0, 107, 238),  // Color azul personalizado
       ),
       // Cuerpo principal de la pantalla
       body: Padding(

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_intro/bloc/login_bloc.dart';
+import 'package:flutter_intro/bloc/login_bloc/login_bloc.dart';
 import 'views/login_view.dart';
 import 'views/home_view.dart';
 import 'views/products_view.dart';
 import 'views/cart_view.dart';
-import 'views/confirmation_view.dart';
+
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -34,7 +34,6 @@ class MainApp extends StatelessWidget {
           '/home': (context) => const HomeScreen(),
           '/products': (context) => const ProductsScreen(),
           '/cart': (context) => const CartScreen(),
-          '/confirmation': (context) => const ConfirmationScreen(),
         },
       ),
     );

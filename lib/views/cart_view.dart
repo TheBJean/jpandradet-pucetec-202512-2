@@ -9,7 +9,7 @@ class CartScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Carrito'),
-        backgroundColor:Color.fromARGB(230, 16, 187, 28),
+        backgroundColor:const Color.fromARGB(230, 16, 187, 28),
       ),
       body: Center(
           child: Column(

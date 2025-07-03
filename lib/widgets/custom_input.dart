@@ -14,7 +14,7 @@ class CustomInput extends StatelessWidget {
         child: TextField(
           obscureText: hide,
           decoration: InputDecoration(
-            border: OutlineInputBorder(),
+            border: const OutlineInputBorder(),
             labelText: label,
           ),
         ),
